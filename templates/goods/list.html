@@ -1,0 +1,103 @@
+{%extends 'goods_base.html'%}
+{%block Selfbody%}
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">新鲜水果</a>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					{%for new in same_fruit %}
+					<li>
+						<a href='{%url "goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
+						<h4><a href='{%url "goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
+						<div class="prize">￥{{ new.price }}</div>
+					</li>
+					{%endfor%}
+					
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=1' class="active">默认</a>
+				<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=2'>价格</a>
+				<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=3'>人气</a>
+			</div>
+
+			<ul class="goods_type_list clearfix">
+				{% for goods in curr_page_object %}
+					<li>
+						<a href='{%url "goods:detail"%}?item={{ goods.id }}'>
+							<img src="/static/site/images/{{goods.pic}}">
+						</a>
+						<h4>
+							<a href='{%url "goods:detail"%}?item={{ goods.id }}'>{{goods.title}}</a>
+						</h4>
+						<div class="operate">
+							<span class="prize">￥{{goods.price}}</span>
+							<span class="unit"> /{{goods.unit}}</span>
+							<a href="#" class="add_goods" title="加入购物车"></a>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+
+			<div class="pagenation">
+				{%if pre_page != -1 %}
+					<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{ pre_page }}&order={{curr_order}}'><上一页</a>
+				{%endif%}
+				<span id="pages">
+				{%for i  in page_range %}
+					{% if i == ... %}
+						<a>...</a>
+					{% elif i == curr_page_num %}
+						<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{i}}&order={{curr_order}}' class="active">
+								{{i}}
+							</a>
+					{% else %}
+					<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{i}}&order={{curr_order}}'>
+						{{i}}
+					</a>
+					{%endif%}
+				{%endfor%}
+
+				<!-- // 判断是否拥有多页 -->
+				{% if pages_more == True %}
+					<a>...</a>
+				{% endif %}
+				</span>
+				{%if next_page  != -1 %}
+					<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{next_page}}&order={{curr_order}}'>下一页></a>
+				{%endif%}
+				<a style="border: 0px">共{{ num_page }}页</a>
+			</div>
+			<script>
+				$(function(){
+					// 用于控制排序的高亮显示
+					if ("{{ curr_order }}" == "1"){
+						$('.sort_bar a:eq(0)').addClass("active").siblings().removeClass("active")
+					} else if ("{{ curr_order }}" == "2"){
+						$('.sort_bar a:eq(1)').addClass("active").siblings().removeClass("active")
+					} else{
+						$('.sort_bar a:eq(2)').addClass("active").siblings().removeClass("active")
+					}
+
+				
+
+				})
+			</script>
+		</div>
+
+
+
+
+	</div>
+
+
+{%endblock Selfbody%}

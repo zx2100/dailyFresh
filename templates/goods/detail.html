@@ -1,0 +1,157 @@
+{%extends 'goods_base.html'%}
+{%block Selfbody%}
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">新鲜水果</a>
+		<span>></span>
+		<a href="#">商品详情</a>
+	</div>
+
+	<div class="goods_detail_con clearfix">
+		<div class="goods_detail_pic fl"><img src="/static/site/images/{{ object.pic }}"></div>
+
+		<div class="goods_detail_list fr">
+			<h3>{{ object.title }}</h3>
+			<p>{{ object.brief }}</p>
+			<div class="prize_bar">
+				<span class="show_pirze">¥<em>{{ object.price }}</em></span>
+				<span class="show_unit">单  位：{{ object.unit }}</span>
+			</div>
+			<div class="goods_num clearfix">
+				<div class="num_name fl">数 量：</div>
+				<div class="num_add fl">
+					<input id='num_add' type="text" class="num_add fl" value="1">
+					<a href="javascript:;" class="add fr">+</a>
+					<a href="javascript:;" class="minus fr">-</a>		
+				</div> 
+				<div class="num_name fl num_inventory">库存：<b>{{ object.inventory }}</b> 件 </div>
+			</div>
+			<div class="total">总价：<em></em>元</div>
+			<div class="operate_btn">
+				<a href="javascript:;" class="buy_btn">立即购买</a>
+				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+			</div>
+		</div>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					{%for new in same_type%}
+					<li>
+						<a href='{%url "goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
+						<h4><a href='{%url "goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
+						<div class="prize">￥{{ new.price }}</div>
+					</li>
+					{%endfor%}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<ul class="detail_tab clearfix">
+				<li class="active">商品介绍</li>
+				<li>评论</li>
+			</ul>
+
+			<div class="tab_content">
+				<dl>
+					<dt>商品详情：</dt>
+					<dd>{{ object.content|safe }}</dd>
+				</dl>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="add_jump"></div>
+
+	<script type="text/javascript" src="static/user/js/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript">
+		var $add_x = $('#add_cart').offset().top;
+		var $add_y = $('#add_cart').offset().left;
+
+		var $to_x = $('#show_count').offset().top;
+		var $to_y = $('#show_count').offset().left;
+
+		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+		$('#add_cart').click(function(){
+			$(".add_jump").stop().animate({
+				'left': $to_y+7,
+				'top': $to_x+7},
+				"fast", function() {
+					$(".add_jump").fadeOut('fast',function(){
+						$('#show_count').html(2);
+					});
+
+			});
+		})
+
+	</script>
+	<script>
+		var $price =$('.show_pirze em').text()
+		var $total_price = 0
+		var $now = parseInt($('#num_add').val())
+		var $count = parseInt($(".num_inventory b").text())
+		//计算价格
+		function valuation () {
+			// 计算是否超出库存
+			$now = parseInt($('#num_add').val())
+			if (parseInt($count) >= $now){
+				$price = parseFloat($price)
+				$total_price = $price * $now
+				$('.total em').html($total_price.toFixed(2))
+			} else {
+				$('.total').html("<em></em>")
+				$('.total em').html("超出库存范围")
+			}
+	
+		}
+		
+		//一开始，就应该计算总价
+		valuation()
+
+		$("#num_add").keyup( function() { 
+			$now = parseInt($('#num_add').val())
+			
+			 if ($count >= $now){
+				$('#num_add').val($now)
+				valuation()
+			} else{
+				$('.total').html("<em></em>")
+				$('.total em').html("超出库存范围")
+				
+			}	
+			
+		})
+
+		// +1
+		$(".add").click(function(){
+			// 在增加数量之前，判断有没库存
+			
+			$now = parseInt($('#num_add').val())
+			if (parseInt($count) > $now){
+				$now += 1
+				$('#num_add').val($now)
+				valuation()
+			}	
+		
+		})
+		// -1
+		$(".minus").click(function(){
+			$now = parseInt($('#num_add').val())
+			if ( $now > 1){
+				$now -= 1
+				$('#num_add').val($now)
+				valuation()
+			}
+			// 计算价格
+
+		
+			
+		})
+	</script>
+{%endblock Selfbody%}

@@ -1,0 +1,141 @@
+
+{%extends "user/base_user.html"%}
+
+{%block head%}
+<script>
+$(function(){
+	$(".name_input").blur(function(){
+		userName = $(".name_input").val()
+		$.ajax({
+			type: "GET",  //默认get
+			url: "register_exist",  //默认当前页
+			data: "user=" + userName,  //格式{key:value}
+			dataType: "json",
+			beforeSend: function () {}, //请求发送前回调,常用验证
+			success: function (response) {  //请求成功回调
+				if (response.count == 0){
+					$(".user_error").html("此用户不存在").show()
+				} else{
+					$(".user_error").hide()
+				}
+
+			},
+			error: function (e) {  //请求超时回调
+				// if(e.statusText == "timeout"){
+				// 	alert("请求超时");
+				// }
+				console.log(e)
+			},
+		});
+		
+		
+
+	})
+	$(".input_submit").click(function(){
+		//初始化
+		$(".pwd_error").hide()
+		// 写入csrf
+		$.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        });
+		//验证账户密码
+		$.ajax({
+			type: "POST",  //默认get
+			url: "login_handler",  //默认当前页
+			data: 
+			{
+				"username": $("input.name_input").val(), 
+				"pwd":$("input.pass_input").val(),
+				"checked": $("#user_checked").is(':checked')
+			},  
+			dataType: "json",
+			beforeSend: function () {}, //请求发送前回调,常用验证
+			success: function (response) {  //请求成功回调
+				if (response.result != 0){
+					//1是密码错误
+					$(".pwd_error").html("密码错误").show()
+
+				} else {
+					//密码正确则跳转到用户中心
+					window.location.href = response.redirect
+				}
+
+
+			},
+			error: function (e) {  //请求超时回调
+				if(e.statusText == "timeout"){
+					alert("请求超时");
+				}
+			},
+			complete: function () {}, //无论请求是成功还是失败都会执行的回调，常用全局成员的释放，或者页面状态的重置
+		});
+		
+	})
+	// 记住账户
+	//获取所有cookies
+	var username = getCookie("username")
+	if ( username != ""){
+		$(".name_input").val(username)
+		$("#user_checked").attr("checked","checked")
+	}
+
+	function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+         }
+         if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+         }
+     }
+    return "";
+	} 
+})
+// ajax获取用户名
+</script>
+{%endblock%}
+
+
+
+
+{%block body%}
+	<div class="login_top clearfix">
+		<a href="../goods/index.html" class="login_logo"><img src="/static/user/images/logo02.png"></a>
+	</div>
+
+	<div class="login_form_bg">
+		<div class="login_form_wrap clearfix">
+			<div class="login_banner fl"></div>
+			<div class="slogan fl">日夜兼程 · 急速送达</div>
+			<div class="login_form fr">
+				<div class="login_title clearfix">
+					<h1>用户登录</h1>
+					<a href="/user/register">立即注册</a>
+				</div>
+				<div class="form_input">
+					<form id="user_submit" >
+						{%csrf_token%}
+						<input type="text" name="username" class="name_input" placeholder="请输入用户名">
+						<div class="user_error">输入错误</div>
+						<input type="password" name="pwd" class="pass_input" placeholder="请输入密码">
+						<div class="pwd_error">输入错误</div>
+						<div class="more_input clearfix">
+							<input type="checkbox" id="user_checked">
+							<label>记住用户名</label>
+							<a href="#">忘记密码</a>
+						</div>
+						<input type="button" name="" value="登录" class="input_submit">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{%endblock body%}
+
+
+
