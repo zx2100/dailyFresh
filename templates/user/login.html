@@ -1,5 +1,5 @@
 
-{%extends "user/base_user.html"%}
+{%extends "base.html"%}
 
 {%block head%}
 <script>
@@ -56,11 +56,9 @@ $(function(){
 					$(".pwd_error").html("密码错误").show()
 
 				} else {
-					//密码正确则跳转到用户中心
+					//密码正确则跳转到用户登陆之前的页面
 					window.location.href = response.redirect
 				}
-
-
 			},
 			error: function (e) {  //请求超时回调
 				if(e.statusText == "timeout"){
@@ -98,8 +96,6 @@ $(function(){
 // ajax获取用户名
 </script>
 {%endblock%}
-
-
 
 
 {%block body%}

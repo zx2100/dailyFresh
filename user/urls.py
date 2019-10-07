@@ -5,7 +5,7 @@ urlpatterns = [
     url(r"^$", views.index),
     url(r"^register$", views.register),
     url(r"^register_handler$", views.register_handler),
-    url(r"^login$", views.login, name="user_login"),
+    url(r"^login$", views.user_login, name="user_login"),
     url(r"^register_exist$", views.register_exist),
     url(r"^login_handler$", views.login_handler),
     url(r"^user_center_info$", views.user_center_info),

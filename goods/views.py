@@ -10,12 +10,11 @@ def index(request):
     fruit_list = models.GoodInfo.objects.filter(gtype=1).filter(isDelete=False)
     fruit_order_new = fruit_list.order_by('-id')[:4]
     fruit_order_click = fruit_list.order_by('-click')[:3]
-    # 判断当前是否登陆
-    user_name = request.session.get('uname', default="")
-    print(user_name)
+
+
     context = {
         "title": "首页",
-        "user_name": user_name,
+        "user_name": request.session.get('uname', default=""),
         "fruit_new": fruit_order_new,
         "fruit_click": fruit_order_click,
         "fruit_type": fruit_list[0].gtype
@@ -33,13 +32,42 @@ def detail(request):
     same_type = detail_info.gtype
     new_object = models.GoodInfo.objects.filter(gtype=same_type).order_by('-id')[:3]
 
+    # 用户最近浏览的前5个商品id，写进cookies中,recently_goods是最近浏览的5个
+    # 获取用户保存的cookies
+    recently_cookies = request.COOKIES.get("recently")
+    recently_goods = ""
+    recently_cookies_list = []
+    if recently_cookies is None:
+        recently_cookies_list.append(str(detail_info.id))
+    else:
+        recently_cookies_list = recently_cookies.split(",")
+        if str(detail_info.id) in recently_cookies_list:
+            # 先删除，后增加，达到移动位置效果
+            recently_cookies_list.remove(str(detail_info.id))
+            recently_cookies_list.append(str(detail_info.id))
+        else:
+            # 如果没有，则直接增加,加之前，判断是否超出5个，否则删除最旧的，然后再增加
+            if len(recently_cookies_list) < 5:
+                recently_cookies_list.append(str(detail_info.id))
+            else:
+                del recently_cookies_list[0]
+                recently_cookies_list.append(str(detail_info.id))
+
+    # 把最新5个商品，转换成字符串
+    recently_goods = ",".join(recently_cookies_list)
 
     context = {
         "title": detail_info.title,
         "object": detail_info,
         "same_type": new_object,
+        "user_name": request.session.get('uname', default=""),
+
     }
-    return render(request, "goods/detail.html", context=context)
+
+    response = render(request, "goods/detail.html", context=context)
+    # 保存最近浏览的5个
+    response.set_cookie("recently", recently_goods)
+    return response
 
 
 def goods_list(request):
@@ -151,6 +179,7 @@ def goods_list(request):
     context = {
         "title": models.TypeInfo.objects.get(pk=re_type),
         "num_page": page_object.num_pages,
+        "user_name": request.session.get('uname', default=""),
         "curr_page_object": revc_page,
         "pre_page": pre_page,
         "next_page": next_page,
