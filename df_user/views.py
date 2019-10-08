@@ -74,7 +74,7 @@ def register_handler(request):
 
 def register_exist(request):
     post = request.GET
-    username = post["df_user"]
+    username = post["user"]
     count = UserInfo.objects.filter(uname=username).count()
     json_res = {"count": count}
     return JsonResponse(json_res)
@@ -185,7 +185,7 @@ def user_center_site(request):
 
 @judge_vaild
 def user_center_site_handler(request):
-    userinfo = models.UserInfo.objects.get(id=request.session.get("uid"))
+    userinfo = UserInfo.objects.get(id=request.session.get("uid"))
     post = request.POST
     shou = post["shou"]
     address = post["address"]

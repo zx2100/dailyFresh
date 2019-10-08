@@ -5,19 +5,46 @@ from . import models
 # Create your views here.
 
 def index(request):
-    # return render(request, "df_goods/index.html")
     # 获取水果列表
     fruit_list = models.GoodInfo.objects.filter(gtype=1).filter(isDelete=False)
     fruit_order_new = fruit_list.order_by('-id')[:4]
     fruit_order_click = fruit_list.order_by('-click')[:3]
     print(fruit_list)
+    # 获取肉类列表
+    meat_list = models.GoodInfo.objects.filter(gtype=3).filter(isDelete=False)
+    meat_order_new = meat_list.order_by('-id')[:4]
+    meat_order_click = meat_list.order_by('-click')[:3]
+
+    # 获取海鲜列表
+    seafood_list = models.GoodInfo.objects.filter(gtype=2).filter(isDelete=False)
+    seafood_order_new = seafood_list.order_by('-id')[:4]
+    seafood_order_click = seafood_list.order_by('-click')[:3]
+
+    # 获取蛋类家禽
+    poultry_list = models.GoodInfo.objects.filter(gtype=4).filter(isDelete=False)
+    poultry_order_new = poultry_list.order_by('-id')[:4]
+    poultry_order_click = poultry_list.order_by('-click')[:3]
+
 
     context = {
         "title": "首页",
         "user_name": request.session.get('uname', default=""),
+        # 水果
         "fruit_new": fruit_order_new,
         "fruit_click": fruit_order_click,
-        "fruit_type": fruit_list[0].gtype
+        "fruit_type": fruit_list[0].gtype,
+        # 肉
+        "meat_new": meat_order_new,
+        "meat_click": meat_order_click,
+        "meat_type": meat_list[0].gtype,
+        # 海鲜
+        "seafood_new": seafood_order_new,
+        "seafood_click": seafood_order_click,
+        "seafood_type": seafood_list[0].gtype,
+        # 家禽
+        "poultry_new": poultry_order_new,
+        "poultry_click": poultry_order_click,
+        "poultry_type": poultry_list[0].gtype,
     }
     return render(request, "df_goods/index.html", context=context)
 

@@ -19,7 +19,7 @@ class TypeInfo(models.Model):
 
 class GoodInfo(models.Model):
     title = models.CharField(max_length=20, verbose_name='商品名称')
-    pic = models.ImageField(upload_to='df_goods', verbose_name='商品图片')
+    pic = models.ImageField(upload_to='goods', verbose_name='商品图片')
     price = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='商品价格')
     isDelete = models.BooleanField(default=False, verbose_name='是否删除')
     unit = models.CharField(max_length=20, default="500g", verbose_name='商品单位')
