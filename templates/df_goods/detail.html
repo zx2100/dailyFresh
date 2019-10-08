@@ -42,8 +42,8 @@
 				<ul>
 					{%for new in same_type%}
 					<li>
-						<a href='{%url "goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
-						<h4><a href='{%url "goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
+						<a href='{%url "df_goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
+						<h4><a href='{%url "df_goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
 						<div class="prize">￥{{ new.price }}</div>
 					</li>
 					{%endfor%}

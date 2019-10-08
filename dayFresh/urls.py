@@ -1,4 +1,4 @@
-"""tian URL Configuration
+"""dayFresh URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.8/topics/http/urls/
@@ -19,6 +19,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^user/', include("user.urls", namespace="user")),
-    url(r'^', include("goods.urls", namespace='goods'))
+    url(r'^df_user/', include("df_user.urls", namespace="df_user")),
+    url(r'^', include("df_goods.urls", namespace='df_goods'))
 ]

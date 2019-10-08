@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect
 from .models import UserInfo
-from goods.models import GoodInfo
+from df_goods.models import GoodInfo
 import sys
 
 import hashlib
@@ -22,9 +22,9 @@ def judge_vaild(func):
             # 重定向到登陆页
             full_path = request.get_full_path()
             # 如果直接登陆，则转到首页
-            if full_path == "/user/login":
+            if full_path == "/df_user/login":
                 full_path = "/"
-            red = HttpResponseRedirect("/user/login")
+            red = HttpResponseRedirect("/df_user/login")
             red.set_cookie('url', full_path)
             return red
         else:
@@ -38,18 +38,17 @@ def user_login(request):
         "title": "登陆",
         "user_name": request.session.get('uname', default='')
     }
-    return render(request, "user/login.html", context=context)
+    return render(request, "df_user/login.html", context=context)
 
 def register(request):
     context = {
         "title": "注册"
     }
-    return render(request, "user/register.html", context=context)
+    return render(request, "df_user/register.html", context=context)
 
 @judge_vaild
 def index(request):
     return redirect(to=user_center_info)
-
 
 def register_handler(request):
     post = request.POST
@@ -70,12 +69,12 @@ def register_handler(request):
     userinfo.upasswd = entry_pass
     # 保存用户信息
     userinfo.save()
-    return redirect("user:user_login")
+    return redirect("df_user:user_login")
 
 
 def register_exist(request):
     post = request.GET
-    username = post["user"]
+    username = post["df_user"]
     count = UserInfo.objects.filter(uname=username).count()
     json_res = {"count": count}
     return JsonResponse(json_res)
@@ -112,6 +111,8 @@ def login_handler(request):
         # 如果登陆成功，应该返回到用户登陆之前的页面，在处理时，已经保存在cookies中
         # 如果cookies中没有，那就跳转到首页
         user_url = request.COOKIES.get("url")
+        if user_url is None:
+            user_url = "/"
         print("用户从url：%s跳转"%(user_url))
         response = {"result": 0, "redirect": user_url}
     else:
@@ -151,7 +152,7 @@ def user_center_info(request):
             "this": "user_center_info",
             "recently": recently_goods
         }
-        return render(request, "user/user_center_info.html", context=context)
+        return render(request, "df_user/user_center_info.html", context=context)
 
 
 
@@ -163,7 +164,7 @@ def user_center_order(request):
         "this": "user_center_order",
         "user_name": request.session.get('uname', default=""),
     }
-    return render(request, "user/user_center_order.html", context=context)
+    return render(request, "df_user/user_center_order.html", context=context)
 
 
 @judge_vaild
@@ -179,7 +180,7 @@ def user_center_site(request):
         "phoneCall": user[0].uphone,
         "user_name": request.session.get('uname', default=""),
     }
-    return render(request, "user/user_center_site.html", context=context)
+    return render(request, "df_user/user_center_site.html", context=context)
 
 
 @judge_vaild
@@ -204,7 +205,7 @@ def user_center_site_handler(request):
         "phoneCall": userinfo.uphone,
     }
 
-    return render(request, "user/user_center_site.html", context=context)
+    return render(request, "df_user/user_center_site.html", context=context)
 
 def logout(request):
     # 清除登陆信息，并返回到主页

@@ -13,8 +13,8 @@
 				<ul>
 					{%for new in same_fruit %}
 					<li>
-						<a href='{%url "goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
-						<h4><a href='{%url "goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
+						<a href='{%url "df_goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
+						<h4><a href='{%url "df_goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
 						<div class="prize">￥{{ new.price }}</div>
 					</li>
 					{%endfor%}
@@ -25,19 +25,19 @@
 
 		<div class="r_wrap fr clearfix">
 			<div class="sort_bar">
-				<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=1' class="active">默认</a>
-				<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=2'>价格</a>
-				<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=3'>人气</a>
+				<a href='{%url "df_goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=1' class="active">默认</a>
+				<a href='{%url "df_goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=2'>价格</a>
+				<a href='{%url "df_goods:goods_list"%}?type={{ curr_type }}&page={{curr_page_num}}&order=3'>人气</a>
 			</div>
 
 			<ul class="goods_type_list clearfix">
 				{% for goods in curr_page_object %}
 					<li>
-						<a href='{%url "goods:detail"%}?item={{ goods.id }}'>
+						<a href='{%url "df_goods:detail"%}?item={{ goods.id }}'>
 							<img src="/static/site/images/{{goods.pic}}">
 						</a>
 						<h4>
-							<a href='{%url "goods:detail"%}?item={{ goods.id }}'>{{goods.title}}</a>
+							<a href='{%url "df_goods:detail"%}?item={{ goods.id }}'>{{goods.title}}</a>
 						</h4>
 						<div class="operate">
 							<span class="prize">￥{{goods.price}}</span>
@@ -50,18 +50,18 @@
 
 			<div class="pagenation">
 				{%if pre_page != -1 %}
-					<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{ pre_page }}&order={{curr_order}}'><上一页</a>
+					<a href='{%url "df_goods:goods_list"%}?type={{ curr_type }}&page={{ pre_page }}&order={{curr_order}}'><上一页</a>
 				{%endif%}
 				<span id="pages">
 				{%for i  in page_range %}
 					{% if i == ... %}
 						<a>...</a>
 					{% elif i == curr_page_num %}
-						<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{i}}&order={{curr_order}}' class="active">
+						<a href='{%url "df_goods:goods_list"%}?type={{ curr_type }}&page={{i}}&order={{curr_order}}' class="active">
 								{{i}}
 							</a>
 					{% else %}
-					<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{i}}&order={{curr_order}}'>
+					<a href='{%url "df_goods:goods_list"%}?type={{ curr_type }}&page={{i}}&order={{curr_order}}'>
 						{{i}}
 					</a>
 					{%endif%}
@@ -73,7 +73,7 @@
 				{% endif %}
 				</span>
 				{%if next_page  != -1 %}
-					<a href='{%url "goods:goods_list"%}?type={{ curr_type }}&page={{next_page}}&order={{curr_order}}'>下一页></a>
+					<a href='{%url "df_goods:goods_list"%}?type={{ curr_type }}&page={{next_page}}&order={{curr_order}}'>下一页></a>
 				{%endif%}
 				<a style="border: 0px">共{{ num_page }}页</a>
 			</div>

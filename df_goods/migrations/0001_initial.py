@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('title', models.CharField(max_length=20)),
-                ('pic', models.ImageField(upload_to='goods')),
+                ('pic', models.ImageField(upload_to='df_goods')),
                 ('price', models.DecimalField(max_digits=5, decimal_places=2)),
                 ('isDelete', models.BooleanField(default=False)),
                 ('unit', models.CharField(max_length=20, default='500g')),
@@ -37,6 +37,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='goodinfo',
             name='gtype',
-            field=models.ForeignKey(to='goods.TypeInfo'),
+            field=models.ForeignKey(to='df_goods.TypeInfo'),
         ),
     ]

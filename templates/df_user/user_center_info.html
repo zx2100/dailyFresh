@@ -1,4 +1,4 @@
-{%extends "user/base_user.html"%}
+{%extends "df_user/base_user.html"%}
 
 {%block bodySelf%}
 	<div class="right_content clearfix">
@@ -16,8 +16,8 @@
 				<ul class="goods_type_list clearfix">
 			{%for i in recently%}
 				<li>
-					<a href='{%url "goods:detail"%}?item={{ i.id }}'><img src="/static/site/images/{{i.pic}}"></a>
-					<h4><a href='{%url "goods:detail"%}?item={{ i.id }}'>{{i.title}}</a></h4>
+					<a href='{%url "df_goods:detail"%}?item={{ i.id }}'><img src="/static/site/images/{{i.pic}}"></a>
+					<h4><a href='{%url "df_goods:detail"%}?item={{ i.id }}'>{{i.title}}</a></h4>
 					<div class="operate">
 						<span class="prize">￥{{i.price}}</span>
 						<span class="unit">/500g</span>

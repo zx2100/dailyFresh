@@ -38,10 +38,10 @@
 			<div class="subtitle fl">
 				<span>|</span>
 				{%for click in fruit_click%}
-					<a href='{%url "goods:detail"%}?item={{ click.id }}'>{{ click.title }}</a>
+					<a href='{%url "df_goods:detail"%}?item={{ click.id }}'>{{ click.title }}</a>
 				{%endfor%}
 			</div>
-			<a href='{%url "goods:goods_list"%}?type={{ fruit_type.id }}&page=1&order=1' 
+			<a href='{%url "df_goods:goods_list"%}?type={{ fruit_type.id }}&page=1&order=1'
 			class="goods_more fr" id="fruit_more">
 			查看更多 >
 		</a>
@@ -52,8 +52,8 @@
 			<ul class="goods_list fl">
 				{%for new in fruit_new%}
 				<li>
-					<h4><a href='{%url "goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
-					<a href='{%url "goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
+					<h4><a href='{%url "df_goods:detail"%}?item={{ new.id }}'>{{ new.title }}</a></h4>
+					<a href='{%url "df_goods:detail"%}?item={{ new.id }}'><img src="/static/site/images/{{ new.pic }}"></a>
 					<div class="prize">¥ {{ new.price }}</div>
 				</li>
 				{%endfor%}

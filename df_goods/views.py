@@ -5,12 +5,12 @@ from . import models
 # Create your views here.
 
 def index(request):
-    # return render(request, "goods/index.html")
+    # return render(request, "df_goods/index.html")
     # 获取水果列表
     fruit_list = models.GoodInfo.objects.filter(gtype=1).filter(isDelete=False)
     fruit_order_new = fruit_list.order_by('-id')[:4]
     fruit_order_click = fruit_list.order_by('-click')[:3]
-
+    print(fruit_list)
 
     context = {
         "title": "首页",
@@ -19,7 +19,7 @@ def index(request):
         "fruit_click": fruit_order_click,
         "fruit_type": fruit_list[0].gtype
     }
-    return render(request, "goods/index.html", context=context)
+    return render(request, "df_goods/index.html", context=context)
 
 
 def detail(request):
@@ -64,7 +64,7 @@ def detail(request):
 
     }
 
-    response = render(request, "goods/detail.html", context=context)
+    response = render(request, "df_goods/detail.html", context=context)
     # 保存最近浏览的5个
     response.set_cookie("recently", recently_goods)
     return response
@@ -192,4 +192,4 @@ def goods_list(request):
 
     }
     #return HttpResponse(revc_page)
-    return render(request, template_name='goods/list.html', context=context)
+    return render(request, template_name='df_goods/list.html', context=context)
