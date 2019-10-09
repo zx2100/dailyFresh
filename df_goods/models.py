@@ -2,8 +2,10 @@ from django.db import models
 from ckeditor.fields import RichTextField
 # Create your models here.
 
+
 class Meta:
     verbose_name = '商品'
+
 
 class TypeInfo(models.Model):
     title = models.CharField(max_length=20, unique=True)
