@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'df_user',
     'ckeditor',
     'df_goods',
+    'df_cart',
 )
 
 MIDDLEWARE_CLASSES = (
