@@ -9,8 +9,8 @@
 		<input type="button" class="input_btn fr" name="" value="搜索">
 	</div>
 	<div class="guest_cart fr">
-		<a href="#" class="cart_name fl">我的购物车</a>
-		<div class="goods_count fl" id="show_count">1</div>
+		<a href="{% url 'df_cart:index' %}" class="cart_name fl">我的购物车</a>
+		<div class="goods_count fl" id="show_count">0</div>
 	</div>
 </div>
 
@@ -26,6 +26,19 @@
 		</ul>
 	</div>
 </div>
+<script>
+	// 更新我的购物车数量
+	$.ajax({
+		type: "GET",  //默认get
+		url: "{% url 'df_cart:query' %}",  //默认当前页
+		data: {"q":"count"},  //格式{key:value}
+		dataType: "json",
+		beforeSend: function () {}, //请求发送前回调,常用验证
+		success: function (response) {  //请求成功回调
+			$("#show_count").html(response.cart_count)
+		},
+	});
+</script>
 
 {%block Selfbody%}
 

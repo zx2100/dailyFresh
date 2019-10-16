@@ -203,6 +203,7 @@ def goods_list(request):
 
     # 新品推荐2个
     same_fruit = object_all.order_by('-id')[:2]
+
     context = {
         "title": models.TypeInfo.objects.get(pk=re_type),
         "num_page": page_object.num_pages,
@@ -215,7 +216,8 @@ def goods_list(request):
         "curr_type": re_type,
         "curr_order": re_order,
         "pages_more": more,
-        "same_fruit": same_fruit
+        "same_fruit": same_fruit,
+
 
     }
     #return HttpResponse(revc_page)

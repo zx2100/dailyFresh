@@ -10,7 +10,7 @@
 		</div>		
 	</div>
 
-	<div class="total_count">全部商品<em>2</em>件</div>	
+	<div class="total_count">全部商品<em>{{ cart_count }}</em>件</div>	
 	<ul class="cart_list_th clearfix">
 		<li class="col01">商品名称</li>
 		<li class="col02">商品单位</li>
@@ -19,94 +19,184 @@
 		<li class="col05">小计</li>
 		<li class="col06">操作</li>
 	</ul>
+	{% for i in objects %}
 	<ul class="cart_list_td clearfix">
 		<li class="col01"><input type="checkbox" name="" checked></li>
-		<li class="col02"><img src="/static/site/images/goods/goods012.jpg"></li>
-		<li class="col03">奇异果<br><em>25.80元/500g</em></li>
-		<li class="col04">500g</li>
-		<li class="col05"><em>25.80</em>元</li>
+		<li class="col02"><img src="/static/site/images/{{ i.goods.pic }}"></li>
+		<li class="col03">{{ i.goods.title }}<br><em>{{ i.goods.price }}元/{{ i.goods.unit }}</em></li>
+		<li class="col04">{{ i.goods.unit }}</li>
+		<li class="col05"><em>{{ i.goods.price }}</em>元</li>
 		<li class="col06">
-			<div class="num_add">
+			<div class="num_add" id={{ i.id }} >
 				<a href="javascript:;" class="minus fl">-</a>	
-				<input type="text" class="num_show fl" value="1">	
+				<input type="text" class="num_show fl" value="{{i.count}}">	
 				<a href="javascript:;" class="add fl">+</a>
 			</div>
 		</li>
-		<li class="col07"><em>25.80元</em></li>
-		<li class="col08"><a href="javascript:;">删除</a></li>
+		<li class="col07"><em></em></li>
+		<li class="col08"><a href="javascript:;" id={{ i.id }} >删除</a></li>
 	</ul>
-
-	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="" checked></li>
-		<li class="col02"><img src="/static/site/images/goods/goods003.jpg"></li>
-		<li class="col03">大兴大棚草莓<br><em>16.80元/500g</em></li>
-		<li class="col04">500g</li>
-		<li class="col05"><em>16.80</em>元</li>
-		<li class="col06">
-			<div class="num_add">
-				<a href="javascript:;" class="minus fl">-</a>	
-				<input type="text" class="num_show fl" value="1">	
-				<a href="javascript:;" class="add fl">+</a>
-			</div>
-		</li>
-		<li class="col07"><em>16.80</em>元
-			
-		</li>
-		<li class="col08"><a href="javascript:;">删除</a></li>
-	</ul>
-	
+	{% endfor %}
 
 	<ul class="settlements">
 		<li class="col01"><input type="checkbox" name="" checked=""></li>
 		<li class="col02">全选</li>
-		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>2</b>件商品</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em>0</em><br>共计<b>0</b>件商品</li>
 		<li class="col04"><a href="place_order.html">去结算</a></li>
 	</ul>
 
 	<script>
 		$(function(){
-			
+			// 通用变量赋值
+			$total_count = $('.col07').children()
 			//计算函数
-			function calc(price, count){
+			function calc(price, count, ele){
 				value = price * count
 				return value.toFixed(2)
 			}
 
+			function cart_update(id, count, ele){
+				$.ajax({
+					type: "GET",  //默认get
+					url: "/cart/update",  //默认当前页
+					data: {"id": id, "count": count},  //格式{key:value}
+					dataType: "json",
+					beforeSend: function () {}, //请求发送前回调,常用验证
+					success: function (response) {  //请求成功回调
+						ele.siblings(".num_show").val(response.result)
+						// 触发更新价钱
+						ele.siblings(".num_show").focus().blur()
+					},
+				});
+			}
+			//增加按钮
 			$('.add').click(function(){
-			
 				goods_count = parseInt($(this).prev().val())
 				goods_count += 1
-				$(this).prev().val(goods_count)
-				// 计算价钱
-				$('.col06 .num_show').focus().blur()
-				return
-
+				// 通过ajax修改数据，由于异步调用，所以需要把元素自身传递进去，
+				cart_update(
+					$(this).parent().prop("id"), 
+					goods_count,
+					$(this)
+					)	
 			})
 
-			$('.col06 .num_show').blur(function(){
-				// alert("result")
-				price = $(".cart_list_td .col05 em").html()
-				count = $(".cart_list_td .col06 input").val()
-				
-				result = calc(parseFloat(price), parseFloat(count))
-				// return
-				console.log(result)
-			})
-			
-
+			// 减少按钮
 			$('.minus').click(function(){
 			
-				goods_count = parseInt($(this).next().val())
-				if (goods_count > 1){
-					goods_count -= 1
-					$(this).next().val(goods_count)
+			goods_count = parseInt($(this).next().val())
+			if (goods_count > 1){
+				goods_count -= 1
+				// 更新购物车
+				cart_update(
+					$(this).parent().prop("id"), 
+					goods_count,
+					$(this)
+					)
 				}
-					
-
+			})
+			
+			//修改小计价钱
+			$('.num_show').blur(function(){
+				price = $(this).parents(".col06").prev().children().html()
+				count = $(this).val()
+				
+				result = calc(parseFloat(price), parseFloat(count))
+				if (result == "NaN"){
+					$(this).val(1)
+				} else{
+					//计算后，结果放在col07中
+					$(this).parents(".col06").next().children().html(result)
+					// 触发一下计算总价
+					$(this).parents(".col06").next().children().focus().blur()
+				}
+				
 			})
 
+			// 计算总价
+			$total_count.blur(function(){
+				// 获取所有被选中的小计，计算总价
+				total_count = 0
+				total_total = 0
+				console.log("ss")
+				$('.col07').each(function(){
+					// 判断是否选中
+					if ($(this).parent().find(".col01").children().prop("checked") == true) {
+						total_total += parseFloat($(this).children().html())
+						total_count += 1
+					}
+					
+				})
+				$(".settlements .col03 em").html(total_total.toFixed(2))
+				$(".settlements .col03 b").html(total_count)
+			})
+			
+			//刚开始时，应该计算一下所有小计和统计金额，只需要触发一下所有小计即可
+			$('.num_show').focus().blur()
 
+			// 取消选中时，需要重新计算总价，并且判断是否在全选状态
+			$('.cart_list_td .col01 input').click(function(){
+				// 触发计算
+				$('.num_show').focus().blur()
+				//判断是否在全选状态
+				all_ckecked = true
+				// 判断是否有未选中的，如果有直接返回false
+				$('.cart_list_td .col01').each(function(){
+					if ($(this).children().prop("checked") == false){
+						all_ckecked = false
+						// 跳出循环
+						return false
+					}
+				})
+				
+	
+				if (all_ckecked == true){
+					$('.settlements .col01 input').prop("checked", true)
+				} else{
+					$('.settlements .col01 input').prop("checked", false)
+				}
+			})
+			
+			//全选
+			$('.settlements .col01 input').click(function(){
+				if ($(this).prop("checked") == true){
+					$('.cart_list_td .col01 input').prop("checked", true)
+				} else{
+					$('.cart_list_td .col01 input').prop("checked", false)
+				}
+				$('.num_show').focus().blur()
 
+			})
+			
+			//删除商品
+			$(".col08 a").click(function(){
+				var id = $(this).prop("id");
+				var $this = $(this)
+				$.ajax({
+					type: "GET",  //默认get
+					url: "/cart/del",  //默认当前页
+					data: {"id":id},  //格式{key:value}
+					dataType: "json",
+					beforeSend: function () {}, //请求发送前回调,常用验证
+					success: function (response) {  //请求成功回调
+						if (response.result == "ok"){
+							$this.parent().parent().remove()
+							// 修改全部商品数量
+							var count = $(".cart_list_td").length
+							$(".total_count em").html(count)
+							// 判断当前剩下多少项，如果少于1，总价置0
+							if ( count < 1){
+								$(".settlements .col03 em").html(0)
+								$(".settlements .col03 b").html(0)
+							} else{
+								$total_count.focus().blur();
+							}
+							
+						}
+					},
+
+				});
+			})
 
 		})
 		

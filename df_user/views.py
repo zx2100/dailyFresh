@@ -19,14 +19,20 @@ def judge_vaild(func):
         if request.session.get("uid") is None or request.session.get_expiry_age() <= 1:
             # 如果未登陆状态，或者会话过期执行此分支
             # 获取用户登陆前访问的网址，用于登陆后，返回
-            # 重定向到登陆页
+            # 获取用户登陆前的url
             full_path = request.get_full_path()
             # 如果直接登陆，则转到首页
-            if full_path == "/df_user/login":
+            if full_path == "/user/login":
                 full_path = "/"
-            red = HttpResponseRedirect("/df_user/login")
-            red.set_cookie('url', full_path)
-            return red
+            # 判断是否通过AJAX访问
+            if request.is_ajax():
+                json = JsonResponse({'redirect': '1', 'address': '/user/login'})
+                json.set_cookie('url', full_path)
+                return json
+            else:
+                red = HttpResponseRedirect("/user/login")
+                red.set_cookie('url', full_path)
+                return red
         else:
             # 更新会话
             request.session.modified = True

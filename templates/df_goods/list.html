@@ -42,7 +42,7 @@
 						<div class="operate">
 							<span class="prize">￥{{goods.price}}</span>
 							<span class="unit"> /{{goods.unit}}</span>
-							<a href="#" class="add_goods" title="加入购物车"></a>
+							<a href="javascript:;" class="add_goods" id={{ goods.id }} title="加入购物车"></a>
 						</div>
 					</li>
 				{% endfor %}
@@ -88,8 +88,30 @@
 						$('.sort_bar a:eq(2)').addClass("active").siblings().removeClass("active")
 					}
 
-				
-
+					// 加入购物车（ajax方式）
+					$('.add_goods').click(function(){
+						var goodsId = $(this).prop("id");
+						var goodsCount = 1 ;
+						$.ajax({
+							type: "GET",  //默认get
+							url: "/cart/add",  //默认当前页
+							data: {"id":goodsId, "count":goodsCount},  //格式{key:value}
+							dataType: "json",
+							beforeSend: function () {}, //请求发送前回调,常用验证
+							success: function (response) {  //请求成功回调
+								// 判断是否登陆，1是未登陆状态，需要重定向
+								if (response.redirect == "1" ){
+									console.log(response.address)
+									window.location.href = response.address
+								} else{
+									// 更新购物车数量
+									$("#show_count").html(response.cart_count)
+								}
+							},
+						});
+					})
+						
+			
 				})
 			</script>
 		</div>

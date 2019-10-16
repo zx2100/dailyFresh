@@ -11,7 +11,7 @@
 	<div class="goods_detail_con clearfix">
 		<div class="goods_detail_pic fl"><img src="/static/site/images/{{ object.pic }}"></div>
 
-		<div class="goods_detail_list fr">
+		<div class="goods_detail_list fr" id="{{ object.id }}">
 			<h3>{{ object.title }}</h3>
 			<p>{{ object.brief }}</p>
 			<div class="prize_bar">
@@ -69,7 +69,7 @@
 
 	<div class="add_jump"></div>
 
-	<script type="text/javascript" src="static/user/js/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="static/site/js/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript">
 		var $add_x = $('#add_cart').offset().top;
 		var $add_y = $('#add_cart').offset().left;
@@ -84,9 +84,28 @@
 				'top': $to_x+7},
 				"fast", function() {
 					$(".add_jump").fadeOut('fast',function(){
-						$('#show_count').html(2);
+						$('#show_count').html($('#show_count').html);
 					});
 
+			});
+			// 加入购物车
+			var goodsId = $(".goods_detail_list").prop('id');
+			var goodsCount = $("#num_add").val() ;
+			$.ajax({
+				type: "GET",  //默认get
+				url: "/cart/add",  //默认当前页
+				data: {"id":goodsId, "count":goodsCount},  //格式{key:value}
+				dataType: "json",
+				beforeSend: function () {}, //请求发送前回调,常用验证
+				success: function (response) {  //请求成功回调
+					// 判断是否登陆，1是未登陆状态，需要重定向
+					if (response.redirect == "1" ){
+						window.location.href = response.address
+					} else{
+						// 更新购物车数量
+						$("#show_count").html(response.cart_count)
+					}
+				},
 			});
 		})
 
@@ -153,5 +172,8 @@
 		
 			
 		})
+	
+		
+	
 	</script>
 {%endblock Selfbody%}

@@ -20,11 +20,11 @@ from df_goods.admin import goods_site
 urlpatterns = [
     # 暂时用于商品管理
     url(r'^admin/', include(goods_site.urls)),
-    url(r'^df_user/', include("df_user.urls", namespace="df_user")),
+    url(r'^user/', include("df_user.urls", namespace="df_user")),
     # 专门用户商品管理
     # url(r'^goodsadmin/', include(goods_site.urls)),
     # 购物车url
-    url(r'^df_cart/', include("df_cart.urls", namespace="df_cart")),
+    url(r'^cart/', include("df_cart.urls", namespace="df_cart")),
     url(r'^', include("df_goods.urls", namespace='df_goods'))
 ]
 

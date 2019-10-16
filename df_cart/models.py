@@ -1,3 +1,5 @@
+#coding="utf-8"
+
 from django.db import models
 from df_user.models import UserInfo
 from df_goods.models import GoodInfo
@@ -5,6 +7,6 @@ from df_goods.models import GoodInfo
 # Create your models here.
 
 class CartInfo(models.Model):
-    goodsId = models.ForeignKey(UserInfo)
+    goods = models.ForeignKey(GoodInfo)
     count = models.IntegerField()
-    uId = models.ForeignKey(GoodInfo)
+    user = models.ForeignKey(UserInfo)

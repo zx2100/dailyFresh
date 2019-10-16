@@ -85,7 +85,7 @@ DATABASES = {
         'PORT': "3306",
         'USER': "tiantian",
         'PASSWORD': "523569",
-        'NAME': "tiantian",
+        'NAME': "dailyfresh",
     }
 }
 
