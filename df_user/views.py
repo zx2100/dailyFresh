@@ -112,8 +112,8 @@ def login_handler(request):
         # 提取用户ID和用户名建立会话
         request.session['uid'] = uinfo.id
         request.session['uname'] = uinfo.uname
-        # 10分钟过期
-        request.session.set_expiry(600)
+        # 100分钟过期
+        request.session.set_expiry(6000)
         # 如果登陆成功，应该返回到用户登陆之前的页面，在处理时，已经保存在cookies中
         # 如果cookies中没有，那就跳转到首页
         user_url = request.COOKIES.get("url")
@@ -217,3 +217,8 @@ def logout(request):
     # 清除登陆信息，并返回到主页
     request.session.flush()
     return redirect("/")
+
+
+@judge_vaild
+def get_uname(request):
+    return JsonResponse({"name": request.session["uname"]})

@@ -21,9 +21,13 @@
 	</ul>
 	{% for i in objects %}
 	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="" checked></li>
+		<li class="col01"><input type="checkbox" id="{{ i.id }}" name="" checked></li>
 		<li class="col02"><img src="/static/site/images/{{ i.goods.pic }}"></li>
-		<li class="col03">{{ i.goods.title }}<br><em>{{ i.goods.price }}元/{{ i.goods.unit }}</em></li>
+		<li class="col03">
+			{{ i.goods.title }}
+			<br><em>{{ i.goods.price }}元/{{ i.goods.unit }}</em>
+			<br><em style="color:red; font-weight: bold;">库存：{{ i.goods.inventory }}</em>
+		</li>
 		<li class="col04">{{ i.goods.unit }}</li>
 		<li class="col05"><em>{{ i.goods.price }}</em>元</li>
 		<li class="col06">
@@ -42,7 +46,7 @@
 		<li class="col01"><input type="checkbox" name="" checked=""></li>
 		<li class="col02">全选</li>
 		<li class="col03">合计(不含运费)：<span>¥</span><em>0</em><br>共计<b>0</b>件商品</li>
-		<li class="col04"><a href="place_order.html">去结算</a></li>
+		<li class="col04"><a href="javascript:;">去结算</a></li>
 	</ul>
 
 	<script>
@@ -118,7 +122,6 @@
 				// 获取所有被选中的小计，计算总价
 				total_count = 0
 				total_total = 0
-				console.log("ss")
 				$('.col07').each(function(){
 					// 判断是否选中
 					if ($(this).parent().find(".col01").children().prop("checked") == true) {
@@ -196,6 +199,29 @@
 					},
 
 				});
+			})
+
+			// 
+			$('.settlements .col04').click(function(){
+				// 合成参数,把用户选择的购物车ID提交上去
+				var para = ""
+				var $this = ""
+				var len = $(".cart_list_td").length - 1
+				$(".cart_list_td").each(function(index, ele){
+					$this = $(this).children(".col01").children()
+					if ($this.prop("checked") == true){
+						//如果para是空的，则不用添加&符号
+						if (para == ""){
+							para += "cart_id=" +$this.prop("id")
+						} else{
+							para += "&cart_id=" +$this.prop("id")
+						}
+						
+					}
+				})
+				// console.log("/order/place?"+ para)
+				window.location.href = "/order/place?"+ para
+			
 			})
 
 		})

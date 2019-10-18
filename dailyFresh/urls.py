@@ -25,6 +25,9 @@ urlpatterns = [
     # url(r'^goodsadmin/', include(goods_site.urls)),
     # 购物车url
     url(r'^cart/', include("df_cart.urls", namespace="df_cart")),
+    # 订单
+    url(r'^order/', include("df_order.urls", namespace="df_order")),
     url(r'^', include("df_goods.urls", namespace='df_goods'))
+
 ]
 

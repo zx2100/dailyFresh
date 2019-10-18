@@ -60,6 +60,7 @@ def add_to_cart(request):
     else:
         return redirect(to='/cart')
 
+
 @judge_vaild
 def del_from_cart(request):
     cart_id = request.GET["id"]
@@ -71,6 +72,7 @@ def del_from_cart(request):
 
     json = JsonResponse({"result": "ok"})
     return json
+
 
 @judge_vaild
 def update_cart(request):
@@ -88,9 +90,11 @@ def update_cart(request):
     print(json)
     return json
 
+
 @judge_vaild
 def query_cart(request):
     # 查询购物车商品数量
     object = CartInfo.objects.filter(user=request.session['uid'])
-
     return JsonResponse({"cart_count": len(object)})
+
+

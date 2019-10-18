@@ -114,7 +114,6 @@ def goods_list(request):
         object_all = object_all.order_by('-click')
     # 分页，1页10个对象
     page_object = Paginator(object_all, 10)
-
     revc_page = page_object.page(re_page)
     # 当前页码
     curr_page_num = revc_page.number
@@ -181,7 +180,6 @@ def goods_list(request):
             # 没有超出3页范围，但是当前页不是第一页，证明在尾部几页
             first_page = page_range[:1]
             second_page = page_range[1:2]
-
             # 取前2页
             first_two_pages = page_range[int(re_page) - 3:int(re_page)-1]
             # 取余下页数
@@ -217,8 +215,6 @@ def goods_list(request):
         "curr_order": re_order,
         "pages_more": more,
         "same_fruit": same_fruit,
-
-
     }
     #return HttpResponse(revc_page)
     return render(request, template_name='df_goods/list.html', context=context)

@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'ckeditor',
     'df_goods',
     'df_cart',
+    'df_order',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -86,6 +87,10 @@ DATABASES = {
         'USER': "tiantian",
         'PASSWORD': "523569",
         'NAME': "dailyfresh",
+        'dailyfresh': {
+            'CHARSET': 'utf8',
+            'COLLATION': 'utf8_general_ci',
+        }
     }
 }
 

@@ -13,5 +13,6 @@ urlpatterns = [
     url(r"^user_center_site$", views.user_center_site),
     url(r"^user_center_site_handler$", views.user_center_site_handler),
     url(r'^logout', views.logout),
+    url(r'^get_name', views.get_uname),
 
 ]
