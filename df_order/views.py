@@ -33,8 +33,8 @@ def place(request):
     user = UserInfo.objects.get(pk=request.session['uid'])
     # 邮费
     postage = 10
-    # 总金额大于200元包邮
-    if total > 200:
+    # 总金额大于100元包邮
+    if total > 100:
         postage = 0
 
     payment = total + postage
@@ -68,7 +68,6 @@ def order_handler(request):
     payment = 0
     # 生成订单编号,相同订单的ID必须一致，未实现
     # order_id = Order_serialize(request.session['uid'])()
-
     # 循环取出对象，并且判断库存
     for i in carts_list:
         carts_object = CartInfo.objects.get(pk=i)
@@ -90,20 +89,20 @@ def order_handler(request):
             "item": carts_object
         }
         carts_object_list.append(order_item)
+        # 随后删除购物车对象
+        carts_object.delete()
+
     # 邮费,总金额小于100，收取邮费10元
     if total < 100:
         postage = 10
 
     payment = total + postage
-
     # 写订单信息
     order_info = OrderInfo()
     # 应付总额
-
     order_info.payment = payment
     order_info.phone = carts_object_list[0]["item"].user.uphone
     order_info.address = carts_object_list[0]["item"].user.uaddress
-
     # 收货地址
     order_info.consignee = carts_object_list[0]["item"].user.ushou
     # 订单归属
@@ -111,7 +110,6 @@ def order_handler(request):
     order_info.status = "未付款"
     order_info.payment_status = False
     order_info.save()
-
     # 开始写商品详情,以下循环把购物车的商品添加进去
     # OrderInfo,主要保存收件人信息，地址，联系方式，是否付款（默认false）
     for order in carts_object_list:
@@ -122,9 +120,10 @@ def order_handler(request):
         order_detail_info.price = order['item'].goods.price
         order_detail_info.subtotal = order['subtotal']
         order_detail_info.save()
-
     return JsonResponse({"result": "ok"})
-    # 删除购物车
+
+
+
 
 class Order_serialize(object):
     def __init__(self, uid):
@@ -155,5 +154,4 @@ class Order_serialize(object):
 
 def test(request):
     result = Order_serialize("1")
-
     return HttpResponse(int(result()))

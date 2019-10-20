@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect
 from .models import UserInfo
 from df_goods.models import GoodInfo
+from df_order.models import OrderInfo, OrderDetailInfo
 import sys
 
 import hashlib
@@ -39,12 +40,14 @@ def judge_vaild(func):
             return func(request, *args, **kwargs)
     return wrapper
 
+
 def user_login(request):
     context = {
         "title": "登陆",
         "user_name": request.session.get('uname', default='')
     }
     return render(request, "df_user/login.html", context=context)
+
 
 def register(request):
     context = {
@@ -55,6 +58,7 @@ def register(request):
 @judge_vaild
 def index(request):
     return redirect(to=user_center_info)
+
 
 def register_handler(request):
     post = request.POST
@@ -135,6 +139,7 @@ def login_handler(request):
 
     return recv_data
 
+
 @judge_vaild
 def user_center_info(request):
     # 取出用户对象
@@ -146,7 +151,6 @@ def user_center_info(request):
         cookies_list = cookies_goods.split(",")
         for i in cookies_list:
             recently_goods.append(GoodInfo.objects.get(id=i))
-
 
     if len(user) == 1:
         context = {
@@ -161,14 +165,27 @@ def user_center_info(request):
         return render(request, "df_user/user_center_info.html", context=context)
 
 
-
-
 @judge_vaild
 def user_center_order(request):
+    user_id = request.session['uid']
+    # 取出用户订单
+    order_objects = OrderInfo.objects.filter(user=user_id)
+    orders = []
+    # 取出订单后，需要取出订单的内容，最后重新合成一个新的对象
+    for i in order_objects:
+        order_detail_objects = OrderDetailInfo.objects.filter(order=i)
+        # 合成对象
+        o = {
+            "order_info": i,
+            "order_detail_info": order_detail_objects
+        }
+        orders.append(o)
+
     context = {
         "title": "用户中心",
         "this": "user_center_order",
         "user_name": request.session.get('uname', default=""),
+        "orders": orders
     }
     return render(request, "df_user/user_center_order.html", context=context)
 
