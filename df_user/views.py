@@ -236,6 +236,6 @@ def logout(request):
     return redirect("/")
 
 
-@judge_vaild
+
 def get_uname(request):
     return JsonResponse({"name": request.session["uname"]})

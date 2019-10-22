@@ -17,8 +17,11 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('count', models.IntegerField()),
-                ('price', models.DecimalField(max_digits=5, decimal_places=2)),
+                ('price', models.DecimalField(max_digits=6, decimal_places=2)),
                 ('subtotal', models.IntegerField()),
+                ('pic', models.ImageField(upload_to='order/goods')),
+                ('title', models.CharField(max_length=20)),
+                ('unit', models.CharField(max_length=20, default='500g')),
                 ('goods', models.ForeignKey(to='df_goods.GoodInfo')),
             ],
         ),
@@ -32,7 +35,8 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(max_length=20)),
                 ('status', models.CharField(max_length=30)),
                 ('payment_status', models.BooleanField(default=False)),
-                ('payment', models.DecimalField(max_digits=6, decimal_places=2)),
+                ('payment', models.DecimalField(max_digits=8, decimal_places=2)),
+                ('another_id', models.BigIntegerField(unique=True)),
                 ('user', models.ForeignKey(to='df_user.UserInfo')),
             ],
         ),
@@ -40,5 +44,10 @@ class Migration(migrations.Migration):
             model_name='orderdetailinfo',
             name='order',
             field=models.ForeignKey(to='df_order.OrderInfo'),
+        ),
+        migrations.AddField(
+            model_name='orderdetailinfo',
+            name='order_aff',
+            field=models.ForeignKey(related_name='order_aff', to='df_order.OrderInfo', to_field='another_id'),
         ),
     ]

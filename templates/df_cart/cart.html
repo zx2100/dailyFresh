@@ -25,15 +25,15 @@
 		<li class="col02"><img src="/static/site/images/{{ i.goods.pic }}"></li>
 		<li class="col03">
 			{{ i.goods.title }}
-			<br><em>{{ i.goods.price }}元/{{ i.goods.unit }}</em>
-			<br><em style="color:red; font-weight: bold;">库存：{{ i.goods.inventory }}</em>
+			<!-- <br><em>{{ i.goods.price }}元/{{ i.goods.unit }}</em> -->
+			<br><em style="color:red; font-weight: bold;">库存：<em style="color:red;" id="inventory" >{{ i.goods.inventory }}</em></em>
 		</li>
 		<li class="col04">{{ i.goods.unit }}</li>
 		<li class="col05"><em>{{ i.goods.price }}</em>元</li>
 		<li class="col06">
 			<div class="num_add" id={{ i.id }} >
 				<a href="javascript:;" class="minus fl">-</a>	
-				<input type="text" class="num_show fl" value="{{i.count}}">	
+				<input type="text" id="{{ i.goods.inventory }}" class="num_show fl" value="{{i.count}}">	
 				<a href="javascript:;" class="add fl">+</a>
 			</div>
 		</li>
@@ -67,6 +67,7 @@
 					dataType: "json",
 					beforeSend: function () {}, //请求发送前回调,常用验证
 					success: function (response) {  //请求成功回调
+						
 						ele.siblings(".num_show").val(response.result)
 						// 触发更新价钱
 						ele.siblings(".num_show").focus().blur()
@@ -75,8 +76,10 @@
 			}
 			//增加按钮
 			$('.add').click(function(){
+				var inventory = 0
 				goods_count = parseInt($(this).prev().val())
 				goods_count += 1
+				// 是否超出库存
 				// 通过ajax修改数据，由于异步调用，所以需要把元素自身传递进去，
 				cart_update(
 					$(this).parent().prop("id"), 
@@ -84,6 +87,30 @@
 					$(this)
 					)	
 			})
+
+			//num_show 发生改变
+			$(".num_show").keyup( function() { 
+				// 库存
+				var $inv = parseInt($(this).prop("id"));
+				var $input = parseInt($(this).val());
+				//用于指定商品数量
+				var $count = 0;
+				
+				if ($inv > $input){
+					$count = $input
+				} else{
+					$count = $inv
+				}
+
+
+				cart_update(
+					$(this).parent().prop("id"), 
+					$count,
+					$(this).next()
+					)	
+				
+			
+		})
 
 			// 减少按钮
 			$('.minus').click(function(){

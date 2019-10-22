@@ -80,6 +80,12 @@ def update_cart(request):
     goods_count = request.GET["count"]
     try:
         object = CartInfo.objects.get(pk=cart_id)
+        # 判断库存状态
+        print(object.goods.inventory)
+        if object.goods.inventory < int(goods_count):
+            # 库存不满足
+            goods_count = object.goods.inventory
+
         object.count = int(goods_count)
         object.save()
         json = JsonResponse({"result": object.count})
@@ -87,7 +93,6 @@ def update_cart(request):
         # 失败返回原先的数量
         json = JsonResponse({"result": goods_count})
 
-    print(json)
     return json
 
 

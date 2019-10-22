@@ -79,14 +79,14 @@
 
 	<div class="popup_con">
 		<div class="popup">
-			<p>订单提交成功！</p>
+			<p></p>
 		</div>
 		
 		<div class="mask"></div>
 	</div>
 	<script type="text/javascript" src="js/jquery-1.12.2.js"></script>
 	<script type="text/javascript">
-		$('#order_btn').click(function() {
+		function fade(){
 			localStorage.setItem('order_finish',2);
 			$('.popup_con').fadeIn('fast', function() {
 				setTimeout(function(){
@@ -94,7 +94,9 @@
 						// window.location.href = 'index';
 					});	
 				},3000)
-			
+			});
+		}
+		$('#order_btn').click(function() {
 			//写csrf
 			$.ajaxSetup({
 				data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
@@ -111,8 +113,6 @@
 				
 			})
 			
-			
-
 			$.ajax({
 				type: "POST",  //默认get
 				url: "/order/order_handler",  //默认当前页
@@ -120,11 +120,19 @@
 				dataType: "json",
 				beforeSend: function () {}, //请求发送前回调,常用验证
 				success: function (response) {  //请求成功回调
+					// 提交成功提示
+					$(".popup").children().html("订单提交成功！")
+					fade()
 					
+				},
+				error: function (e) {  //请求超时回调
+					$(".popup").children().html("订单提交失败！")
+					fade()
 				},
 			});
 				
-			});
+			
 		});
 	</script>
 {%endblock body%}
+
