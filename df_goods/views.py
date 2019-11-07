@@ -2,7 +2,85 @@ from django.shortcuts import render
 from django.http.response import HttpResponse
 from django.core.paginator import Paginator
 from . import models
+from elasticsearch import Elasticsearch
 # Create your views here.
+
+
+# 查询对象
+class EsSearch(object):
+
+    def __init__(self, query=""):
+        self.query = query
+        self.es_ins = Elasticsearch([{"host": "127.0.0.1", "port": 9200}])
+
+    # 默认排序返回，分数最高
+    def ret_default(self):
+        # 查询body
+        query_body = \
+            {
+                "query": {
+                    "match": {
+                        "title": self.query
+                    }
+                }
+            }
+        return self.es_ins.search(index="df_goods", body=query_body)
+
+    # 价格排序返回
+    def ret_price(self):
+        query_body = \
+            {
+                "query": {
+                    "match": {
+                        "title": self.query
+                    }
+                },
+                "sort": [
+                    {
+                        "price": {
+                            "order": "desc"
+                        }
+                    }
+                ]
+            }
+        return self.es_ins.search(index="df_goods", body=query_body)
+    # 人气排序返回
+    def ret_click(self):
+        query_body = \
+            {
+                "query": {
+                    "match": {
+                        "title": self.query
+                    }
+                },
+                "sort": [
+                    {
+                        "click": {
+                            "order": "desc"
+                        }
+                    }
+                ]
+            }
+        return self.es_ins.search(index="df_goods", body=query_body)
+
+    def ret_new(self):
+        query_body = \
+            {
+                "size": 2,
+                "query": {
+                    "match_all": {}
+
+                },
+                "sort": [
+                    {
+                        "id": {
+                            "order": "desc"
+                        }
+                    }
+                ]
+            }
+        return self.es_ins.search(index="df_goods", body=query_body)
+
 
 def index(request):
     # 获取水果列表
@@ -47,7 +125,6 @@ def index(request):
         "poultry_type": poultry_list[0].gtype,
     }
     return render(request, "df_goods/index.html", context=context)
-
 
 def detail(request):
     get_var = request.GET
@@ -218,3 +295,45 @@ def goods_list(request):
     }
     #return HttpResponse(revc_page)
     return render(request, template_name='df_goods/list.html', context=context)
+
+
+def goods_search(request):
+    query_str = request.GET["q"]
+    sort = request.GET["sort"]
+
+    if sort == "1":
+        es_result = EsSearch(query_str).ret_price()
+    elif sort == "2":
+        es_result = EsSearch(query_str).ret_click()
+    else:
+        es_result = EsSearch(query_str).ret_default()
+
+    # 查询命中数，
+    hits = es_result["hits"]["total"]["value"]
+
+    es_list = []
+    for i in es_result['hits']['hits']:
+        # 重构可迭代对象
+        es_list.append(i["_source"])
+
+
+    # 取出三个最新商品
+    new_2 = EsSearch().ret_new()
+
+    es_new_list = []
+    for i in new_2['hits']['hits']:
+        # 重构可迭代对象
+        es_new_list.append(i["_source"])
+
+    print(es_new_list[0]['pic'])
+    context = {
+        "es": es_list,
+        "title": "搜索结果",
+        "hits": hits,
+        "curr_order": sort,
+        "query": query_str,
+        "es_new": es_new_list
+    }
+
+
+    return render(request, template_name="df_goods/search_list.html", context=context)
